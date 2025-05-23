@@ -5,13 +5,17 @@ inputs:
   working-directory:
     description: "The directory to run dotnet commands in"
     required: true
+  dotnet-version:
+    description: "The version of dotnet to use"
+    required: false
+    default: "8.0.x"
 
 runs:
   using: "composite"
   steps:
     - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
       with:
-        dotnet-version: "8.0.x"
+        dotnet-version: ${{ inputs.dotnet-version }}
 
     - name: Restore tools
       run: dotnet tool restore
