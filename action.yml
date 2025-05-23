@@ -1,5 +1,5 @@
-name: "Build .NET Project"
-description: "Restores, checks formatting, lints, builds, and tests a .NET project"
+name: "Build .NET"
+description: "Restores, checks formatting, lints, builds, and tests a .NET solution/project"
 
 inputs:
   working-directory:
