@@ -1,4 +1,5 @@
 name: "Build .NET"
+author: "Arbeidstilsynet"
 description: "Restores, checks formatting, lints, builds, and tests a .NET solution/project"
 
 inputs:
@@ -7,7 +8,6 @@ inputs:
     required: true
   dotnet-version:
     description: "The version of dotnet to use"
-    required: false
     default: "8.0.x"
 
 runs:
