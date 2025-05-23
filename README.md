@@ -14,7 +14,7 @@ Opinionated action for dotnet workflows. Restores, checks formatting, lints, bui
 | working-directory | The directory to run dotnet commands in     | Yes      |          |
 | dotnet-version    | The version of dotnet to use                | No       | 8.0.x    |
 
-## Usage Example
+## Usage
 
 ```yaml
 jobs:
