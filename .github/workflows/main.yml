@@ -8,6 +8,7 @@ on:
     paths:
       - "action.yml"
       - "VERSION"
+      - ".github/workflows/main.yml"
 
 jobs:
   tag:
@@ -18,7 +19,7 @@ jobs:
       - name: Read VERSION file
         id: version
         run: |
-          version=$(cat VERSION | tr -d ' \n')
+          version=$(cat VERSION | tr -d ' \r\n')
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Create or update tag from VERSION
