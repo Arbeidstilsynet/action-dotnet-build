@@ -1,0 +1,63 @@
+name: "Build .NET"
+author: "Arbeidstilsynet"
+description: "Restores, checks formatting, lints, builds, and tests a .NET solution/project"
+
+inputs:
+  working-directory:
+    description: "The directory to run dotnet commands in"
+    required: true
+  dotnet-version:
+    description: "The version of dotnet to use"
+    default: "8.0.x"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Restore tools
+      run: dotnet tool restore
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
+    - name: Restore
+      run: dotnet restore
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
+    - name: Security check
+      run: dotnet list package --vulnerable
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
+    - name: List packages
+      run: dotnet list package
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
+    - name: Csharpier lint
+      run: dotnet csharpier check .
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
+    - name: Dotnet format style
+      run: dotnet format style --verify-no-changes
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
+    - name: Dotnet format analyzers
+      run: dotnet format analyzers --verify-no-changes
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
+    - name: Build
+      run: dotnet build --no-restore
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
+    - name: Test
+      run: dotnet test --collect "XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
