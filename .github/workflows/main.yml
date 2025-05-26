@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - main
-      - feat/add-action # temp 2
     paths:
       - "action.yml"
       - "VERSION"
-      - ".github/workflows/main.yml"
 
 jobs:
   tag:
