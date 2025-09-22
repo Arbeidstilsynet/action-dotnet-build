@@ -5,7 +5,7 @@ Opinionated action for dotnet workflows. Restores, checks formatting, lints, bui
 ## Requirements
 
 - The `working-directory` must contain a single .NET solution or project compatible with the specified .NET SDK version.
-- [CSharpier](https://csharpier.com) must be installed in the working directory or an ancestor directory (e.g., via `dotnet tool install csharpier`).
+- [CSharpier](https://csharpier.com) must be installed in the working directory or an ancestor directory (e.g., via `dotnet tool install csharpier --create-manifest-if-needed`).
 
 ## Inputs
 
