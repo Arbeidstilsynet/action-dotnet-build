@@ -48,7 +48,7 @@ runs:
           if [ -n "$PACKAGE_NAMES" ]; then
             # Convert comma-separated list to grep pattern (package1|package2|package3)
             GREP_PATTERN=$(echo "$PACKAGE_NAMES" | sed 's/,/|/g')
-            FILTERED_OUTPUT=$(echo "$OUTDATED_OUTPUT" | grep -E "$GREP_PATTERN")
+            FILTERED_OUTPUT=$(echo "$OUTDATED_OUTPUT" | grep -E "$GREP_PATTERN" || true)
           else
             # If no specific packages provided, check all
             FILTERED_OUTPUT="$OUTDATED_OUTPUT"
