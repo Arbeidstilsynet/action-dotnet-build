@@ -9,6 +9,14 @@ inputs:
   dotnet-version:
     description: "The version of dotnet to use"
     default: "8.0.x"
+  check-for-outdated-packages:
+    description: "Whether to check for outdated packages"
+    required: false
+    default: "false"
+  outdated-package-names:
+    description: "A comma-separated list of nuget package names to be used in the outdated package check. If not provided, all packages are taken into consideration."
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -27,6 +35,37 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
+    - name: Outdated package check
+      if: ${{ inputs.check-for-outdated-packages == 'true' }}
+      run: |
+          echo "🔍 Checking for outdated internal package references..."
+
+          # Get outdated packages output
+          OUTDATED_OUTPUT=$(dotnet list package --outdated)
+          
+          # Convert comma-separated package names to grep pattern
+          PACKAGE_NAMES="${{ inputs.outdated-package-names }}"
+          if [ -n "$PACKAGE_NAMES" ]; then
+            # Convert comma-separated list to grep pattern (package1|package2|package3)
+            GREP_PATTERN=$(echo "$PACKAGE_NAMES" | sed 's/,/|/g')
+            FILTERED_OUTPUT=$(echo "$OUTDATED_OUTPUT" | grep -E "$GREP_PATTERN")
+          else
+            # If no specific packages provided, check all
+            FILTERED_OUTPUT="$OUTDATED_OUTPUT"
+          fi
+
+          # Check for any outdated packages
+          if [ -n "$FILTERED_OUTPUT" ] && echo "$FILTERED_OUTPUT" | grep -q .; then
+            echo "❌ Found outdated package references:"
+            echo "$FILTERED_OUTPUT"
+            echo ""
+            echo "💡 It is required to update these packages before you can continue."
+            exit 1
+          else
+            echo "✅ All internal package references are up to date"
+          fi
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
     - name: Security check
       run: dotnet list package --vulnerable
       working-directory: ${{ inputs.working-directory }}
