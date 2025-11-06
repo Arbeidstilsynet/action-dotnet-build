@@ -38,7 +38,7 @@ runs:
     - name: Outdated package check
       if: ${{ inputs.check-for-outdated-packages == 'true' }}
       run: |
-          echo "🔍 Checking for outdated internal package references..."
+          echo "🔍 Checking for outdated package references..."
 
           # Get outdated packages output
           OUTDATED_OUTPUT=$(dotnet list package --outdated)
@@ -59,10 +59,10 @@ runs:
             echo "❌ Found outdated package references:"
             echo "$FILTERED_OUTPUT"
             echo ""
-            echo "💡 It is required to update these packages before you can continue."
+            echo "⏰ It is required to update these packages before you can continue."
             exit 1
           else
-            echo "✅ All internal package references are up to date"
+            echo "✅ All packages which have been checked are up to date"
           fi
       working-directory: ${{ inputs.working-directory }}
       shell: bash
