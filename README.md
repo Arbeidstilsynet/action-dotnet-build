@@ -21,8 +21,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: Arbeidstilsynet/action-dotnet-build@v1
+      - uses: actions/checkout@v5
+      - uses: Arbeidstilsynet/action-dotnet-build@v2
         with:
           working-directory: ./src
 ```
