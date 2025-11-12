@@ -12,7 +12,7 @@ Opinionated action for dotnet workflows. Restores, checks formatting, lints, bui
 | Name              | Description                             | Required | Default |
 |-------------------|-----------------------------------------|----------|---------|
 | working-directory | The directory to run dotnet commands in | Yes      |         |
-| dotnet-version    | The version of dotnet to use            | No       | 8.0.x   |
+| dotnet-version    | The version of dotnet to use            | No       | 10.0.x  |
 
 ## Usage
 
@@ -25,5 +25,10 @@ jobs:
       - uses: Arbeidstilsynet/action-dotnet-build@v1
         with:
           working-directory: ./src
-          dotnet-version: 8.0.x
 ```
+
+## Versioning
+
+This repository uses a simple versioning system based on the `VERSION` file.
+When you update the `VERSION` file and push to `main`, a Git tag with that version is created or updated automatically by the workflow.
+If you make breaking changes to the action, bump the version and update `CHANGELOG.md`.

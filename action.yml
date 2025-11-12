@@ -8,7 +8,7 @@ inputs:
     required: true
   dotnet-version:
     description: "The version of dotnet to use"
-    default: "8.0.x"
+    default: "10.0.x"
 
 runs:
   using: "composite"
