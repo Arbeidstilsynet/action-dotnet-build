@@ -58,6 +58,6 @@ runs:
       shell: bash
 
     - name: Test
-      run: dotnet test --collect "XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+      run: dotnet test -- --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
       working-directory: ${{ inputs.working-directory }}
       shell: bash
