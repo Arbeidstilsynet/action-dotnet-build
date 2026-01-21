@@ -10,15 +10,15 @@ Opinionated action for dotnet workflows. Restores, checks formatting, lints, bui
 
 ## Inputs
 
-| Name               | Description                                                                                                    | Required | Default |
-|--------------------|----------------------------------------------------------------------------------------------------------------|----------|---------|
-| working-directory  | The directory to run dotnet commands in                                                                        | Yes      |         |
-| dotnet-version     | The version of dotnet to use                                                                                   | No       | 10.0.x  |
-| enable-sonar       | Enable SonarQube analysis                                                                                      | No       | false   |
-| sonar-token        | SonarQube token                                                                                                | No       |         |
-| sonar-organization | SonarQube organization                                                                                         | No       |         |
-| sonar-project-key  | SonarQube project key                                                                                          | No       |         |
-| sonar-exclusions   | Comma-separated list of file patterns to exclude from SonarQube analysis (e.g., '**/Migrations/**,**/obj/**')" | No       |         |
+| Name               | Description                                                                                                     | Required            | Default |
+|--------------------|-----------------------------------------------------------------------------------------------------------------|---------------------|---------|
+| working-directory  | The directory to run dotnet commands in                                                                         | Yes                 |         |
+| dotnet-version     | The version of dotnet to use                                                                                    | No                  | 10.0.x  |
+| enable-sonar       | Enable SonarQube analysis                                                                                       | No                  | false   |
+| sonar-token        | SonarQube token                                                                                                 | Yes if enable-sonar |         |
+| sonar-organization | SonarQube organization                                                                                          | Yes if enable-sonar |         |
+| sonar-project-key  | SonarQube project key                                                                                           | Yes if enable-sonar |         |
+| sonar-exclusions   | Comma-separated list of file patterns to exclude from SonarQube analysis (e.g., '**/Migrations/**,**/Utils/**') | No                  |         |
 
 ## Usage
 
