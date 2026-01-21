@@ -103,7 +103,7 @@ runs:
     - name: Begin SonarQube analysis
       if: inputs.enable-sonar == 'true'
       run: |
-        SONAR_ARGS="/k:${{ inputs.sonar-project-key }} /o:${{ inputs.sonar-organization }} /d:sonar.token=${{ inputs.sonar-token }} /d:sonar.host.url=https://SonarQube.io"
+        SONAR_ARGS="/k:${{ inputs.sonar-project-key }} /o:${{ inputs.sonar-organization }} /d:sonar.token=${{ inputs.sonar-token }}"
         if [ -n "${{ inputs.sonar-exclusions }}" ]; then
           SONAR_ARGS="$SONAR_ARGS /d:sonar.exclusions=${{ inputs.sonar-exclusions }}"
         fi
