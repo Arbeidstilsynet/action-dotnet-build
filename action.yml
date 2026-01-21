@@ -21,6 +21,10 @@ inputs:
   sonar-organization:
     description: "SonarCloud organization"
     required: false
+  sonar-exclusions:
+    description: "Comma-separated list of file patterns to exclude from SonarCloud analysis (e.g., '**/Migrations/**,**/obj/**')"
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -98,10 +102,12 @@ runs:
 
     - name: Begin SonarCloud analysis
       if: inputs.enable-sonar == 'true'
-      env:
-        SONAR_TOKEN: ${{ inputs.sonar-token }}
       run: |
-        ${{ runner.temp }}/scanner/dotnet-sonarscanner begin /k:"${{ inputs.sonar-project-key }}" /o:"${{ inputs.sonar-organization }}" /d:sonar.token="${{ inputs.sonar-token }}" /d:sonar.host.url="https://sonarcloud.io"
+        SONAR_ARGS="/k:${{ inputs.sonar-project-key }} /o:${{ inputs.sonar-organization }} /d:sonar.token=${{ inputs.sonar-token }} /d:sonar.host.url=https://sonarcloud.io"
+        if [ -n "${{ inputs.sonar-exclusions }}" ]; then
+          SONAR_ARGS="$SONAR_ARGS /d:sonar.exclusions=${{ inputs.sonar-exclusions }}"
+        fi
+        ${{ runner.temp }}/scanner/dotnet-sonarscanner begin $SONAR_ARGS
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
@@ -117,8 +123,6 @@ runs:
 
     - name: End SonarCloud analysis
       if: inputs.enable-sonar == 'true'
-      env:
-        SONAR_TOKEN: ${{ inputs.sonar-token }}
       run: |
         ${{ runner.temp }}/scanner/dotnet-sonarscanner end /d:sonar.token="${{ inputs.sonar-token }}"
       working-directory: ${{ inputs.working-directory }}
