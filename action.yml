@@ -123,7 +123,7 @@ runs:
         SONAR_ARGS="/o:${{ inputs.sonar-organization }}"
         SONAR_ARGS="$SONAR_ARGS /k:${{ inputs.sonar-project-key }}"
         SONAR_ARGS="$SONAR_ARGS /d:sonar.token=${{ inputs.sonar-token }}"
-        SONAR_ARGS="$SONAR_ARGS /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml"
+        SONAR_ARGS="$SONAR_ARGS /d:sonar.cs.vscoveragexml.reportsPaths=**/coverage.xml"
         if [ -n "${{ inputs.sonar-exclusions }}" ]; then
           SONAR_ARGS="$SONAR_ARGS /d:sonar.exclusions=${{ inputs.sonar-exclusions }}"
         fi
@@ -137,7 +137,7 @@ runs:
       shell: bash
 
     - name: Test
-      run: dotnet test -- --coverage --coverage-output-format opencover --coverage-output coverage.opencover.xml
+      run: dotnet test -- --coverage --coverage-output-format xml --coverage-output coverage.xml
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
