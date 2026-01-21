@@ -14,10 +14,10 @@ Opinionated action for dotnet workflows. Restores, checks formatting, lints, bui
 |----------------------|-----------------------------------------|----------|---------|
 | working-directory    | The directory to run dotnet commands in | Yes      |         |
 | dotnet-version       | The version of dotnet to use            | No       | 10.0.x  |
-| enable-sonar         | Enable SonarCube analysis              | No       | false   |
-| sonar-token          | SonarCube token                        | No       |         |
-| sonar-project-key    | SonarCube project key                  | No       |         |
-| sonar-organization   | SonarCube organization                 | No       |         |
+| enable-sonar         | Enable SonarQube analysis              | No       | false   |
+| sonar-token          | SonarQube token                        | No       |         |
+| sonar-project-key    | SonarQube project key                  | No       |         |
+| sonar-organization   | SonarQube organization                 | No       |         |
 
 ## Usage
 
@@ -34,7 +34,7 @@ jobs:
           working-directory: ./src
 ```
 
-### With SonarCube Integration
+### With SonarQube Integration
 
 ```yaml
 jobs:

@@ -10,19 +10,19 @@ inputs:
     description: "The version of dotnet to use"
     default: "10.0.x"
   enable-sonar:
-    description: "Enable SonarCube analysis"
+    description: "Enable SonarQube analysis"
     default: "false"
   sonar-token:
-    description: "SonarCube token"
+    description: "SonarQube token"
     required: false
   sonar-project-key:
-    description: "SonarCube project key"
+    description: "SonarQube project key"
     required: false
   sonar-organization:
-    description: "SonarCube organization"
+    description: "SonarQube organization"
     required: false
   sonar-exclusions:
-    description: "Comma-separated list of file patterns to exclude from SonarCube analysis (e.g., '**/Migrations/**,**/obj/**')"
+    description: "Comma-separated list of file patterns to exclude from SonarQube analysis (e.g., '**/Migrations/**,**/obj/**')"
     required: false
     default: ""
 
@@ -41,7 +41,7 @@ runs:
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
 
-    - name: Cache SonarCube packages
+    - name: Cache SonarQube packages
       if: inputs.enable-sonar == 'true'
       uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5
       with:
@@ -49,7 +49,7 @@ runs:
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
 
-    - name: Cache SonarCube scanner
+    - name: Cache SonarQube scanner
       if: inputs.enable-sonar == 'true'
       id: cache-sonar-scanner
       uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5
@@ -58,7 +58,7 @@ runs:
         key: ${{ runner.os }}-sonar-scanner
         restore-keys: ${{ runner.os }}-sonar-scanner
 
-    - name: Install SonarCube scanner
+    - name: Install SonarQube scanner
       if: inputs.enable-sonar == 'true' && steps.cache-sonar-scanner.outputs.cache-hit != 'true'
       run: |
         mkdir -p ${{ runner.temp }}/scanner
@@ -100,10 +100,10 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
-    - name: Begin SonarCube analysis
+    - name: Begin SonarQube analysis
       if: inputs.enable-sonar == 'true'
       run: |
-        SONAR_ARGS="/k:${{ inputs.sonar-project-key }} /o:${{ inputs.sonar-organization }} /d:sonar.token=${{ inputs.sonar-token }} /d:sonar.host.url=https://SonarCube.io"
+        SONAR_ARGS="/k:${{ inputs.sonar-project-key }} /o:${{ inputs.sonar-organization }} /d:sonar.token=${{ inputs.sonar-token }} /d:sonar.host.url=https://SonarQube.io"
         if [ -n "${{ inputs.sonar-exclusions }}" ]; then
           SONAR_ARGS="$SONAR_ARGS /d:sonar.exclusions=${{ inputs.sonar-exclusions }}"
         fi
@@ -121,7 +121,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
-    - name: End SonarCube analysis
+    - name: End SonarQube analysis
       if: inputs.enable-sonar == 'true'
       run: |
         ${{ runner.temp }}/scanner/dotnet-sonarscanner end /d:sonar.token="${{ inputs.sonar-token }}"
