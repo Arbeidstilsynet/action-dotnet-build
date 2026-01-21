@@ -9,13 +9,57 @@ inputs:
   dotnet-version:
     description: "The version of dotnet to use"
     default: "10.0.x"
+  enable-sonar:
+    description: "Enable SonarCloud analysis"
+    default: "false"
+  sonar-token:
+    description: "SonarCloud token"
+    required: false
+  sonar-project-key:
+    description: "SonarCloud project key"
+    required: false
+  sonar-organization:
+    description: "SonarCloud organization"
+    required: false
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5
+    - name: Set up JDK 17
+      if: inputs.enable-sonar == 'true'
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: "zulu"
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Cache SonarCloud packages
+      if: inputs.enable-sonar == 'true'
+      uses: actions/cache@v4
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
+    - name: Cache SonarCloud scanner
+      if: inputs.enable-sonar == 'true'
+      id: cache-sonar-scanner
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.temp }}/scanner
+        key: ${{ runner.os }}-sonar-scanner
+        restore-keys: ${{ runner.os }}-sonar-scanner
+
+    - name: Install SonarCloud scanner
+      if: inputs.enable-sonar == 'true' && steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p ${{ runner.temp }}/scanner
+        dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}/scanner
+      shell: bash
 
     - name: Restore tools
       run: dotnet tool restore
@@ -52,6 +96,15 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
+    - name: Begin SonarCloud analysis
+      if: inputs.enable-sonar == 'true'
+      env:
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
+      run: |
+        ${{ runner.temp }}/scanner/dotnet-sonarscanner begin /k:"${{ inputs.sonar-project-key }}" /o:"${{ inputs.sonar-organization }}" /d:sonar.token="${{ inputs.sonar-token }}" /d:sonar.host.url="https://sonarcloud.io"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
     - name: Build
       run: dotnet build --no-restore
       working-directory: ${{ inputs.working-directory }}
@@ -59,5 +112,14 @@ runs:
 
     - name: Test
       run: dotnet test -- --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
+    - name: End SonarCloud analysis
+      if: inputs.enable-sonar == 'true'
+      env:
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
+      run: |
+        ${{ runner.temp }}/scanner/dotnet-sonarscanner end /d:sonar.token="${{ inputs.sonar-token }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
