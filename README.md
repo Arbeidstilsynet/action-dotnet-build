@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: Arbeidstilsynet/action-dotnet-build@v2
+      - uses: Arbeidstilsynet/action-dotnet-build@v4
         with:
           working-directory: ./src
 ```
@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0 # Shallow clones should be disabled for better analysis relevancy
-      - uses: Arbeidstilsynet/action-dotnet-build@v2
+      - uses: Arbeidstilsynet/action-dotnet-build@v4
         with:
           working-directory: ./src
           enable-sonar: 'true'
