@@ -29,6 +29,23 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Validate SonarQube inputs
+      if: inputs.enable-sonar == 'true'
+      run: |
+        if [ -z "${{ inputs.sonar-token }}" ]; then
+          echo "::error::sonar-token is required when enable-sonar is true"
+          exit 1
+        fi
+        if [ -z "${{ inputs.sonar-organization }}" ]; then
+          echo "::error::sonar-organization is required when enable-sonar is true"
+          exit 1
+        fi
+        if [ -z "${{ inputs.sonar-project-key }}" ]; then
+          echo "::error::sonar-project-key is required when enable-sonar is true"
+          exit 1
+        fi
+      shell: bash
+
     - name: Set up JDK 17
       if: inputs.enable-sonar == 'true'
       uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
@@ -103,7 +120,10 @@ runs:
     - name: Begin SonarQube analysis
       if: inputs.enable-sonar == 'true'
       run: |
-        SONAR_ARGS="/k:${{ inputs.sonar-project-key }} /o:${{ inputs.sonar-organization }} /d:sonar.token=${{ inputs.sonar-token }}"
+        SONAR_ARGS="/o:${{ inputs.sonar-organization }}"
+        SONAR_ARGS="$SONAR_ARGS /k:${{ inputs.sonar-project-key }}"
+        SONAR_ARGS="$SONAR_ARGS /d:sonar.token=${{ inputs.sonar-token }}"
+        SONAR_ARGS="$SONAR_ARGS /d:sonar.cs.opencover.reportsPaths=**/coverage.cobertura.xml"
         if [ -n "${{ inputs.sonar-exclusions }}" ]; then
           SONAR_ARGS="$SONAR_ARGS /d:sonar.exclusions=${{ inputs.sonar-exclusions }}"
         fi
