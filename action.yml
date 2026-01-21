@@ -1,6 +1,6 @@
 name: "Build .NET"
 author: "Arbeidstilsynet"
-description: "Restores, checks formatting, lints, builds, and tests a .NET solution/project"
+description: "Restores, checks formatting, lints, builds, and tests a .NET solution/project. Can optionally run SonarQube Cloud analysis."
 
 inputs:
   working-directory:
@@ -15,14 +15,14 @@ inputs:
   sonar-token:
     description: "SonarQube token"
     required: false
-  sonar-project-key:
-    description: "SonarQube project key"
-    required: false
   sonar-organization:
     description: "SonarQube organization"
     required: false
+  sonar-project-key:
+    description: "SonarQube project key"
+    required: false
   sonar-exclusions:
-    description: "Comma-separated list of file patterns to exclude from SonarQube analysis (e.g., '**/Migrations/**,**/obj/**')"
+    description: "Comma-separated list of file patterns to exclude from SonarQube analysis (e.g., '**/Migrations/**,**/Utils/**')"
     required: false
     default: ""
 
