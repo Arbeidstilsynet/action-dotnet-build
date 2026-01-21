@@ -1,5 +1,9 @@
 # Changelog
 
+## v4
+
+Add optional SonarQube Cloud steps.
+
 ## v3
 
 Use Microsoft Testing Platform v2 as test runner and generate cobertura coverage

@@ -9,13 +9,61 @@ inputs:
   dotnet-version:
     description: "The version of dotnet to use"
     default: "10.0.x"
+  enable-sonar:
+    description: "Enable SonarCube analysis"
+    default: "false"
+  sonar-token:
+    description: "SonarCube token"
+    required: false
+  sonar-project-key:
+    description: "SonarCube project key"
+    required: false
+  sonar-organization:
+    description: "SonarCube organization"
+    required: false
+  sonar-exclusions:
+    description: "Comma-separated list of file patterns to exclude from SonarCube analysis (e.g., '**/Migrations/**,**/obj/**')"
+    required: false
+    default: ""
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5
+    - name: Set up JDK 17
+      if: inputs.enable-sonar == 'true'
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: "zulu"
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Cache SonarCube packages
+      if: inputs.enable-sonar == 'true'
+      uses: actions/cache@v4
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
+    - name: Cache SonarCube scanner
+      if: inputs.enable-sonar == 'true'
+      id: cache-sonar-scanner
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.temp }}/scanner
+        key: ${{ runner.os }}-sonar-scanner
+        restore-keys: ${{ runner.os }}-sonar-scanner
+
+    - name: Install SonarCube scanner
+      if: inputs.enable-sonar == 'true' && steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p ${{ runner.temp }}/scanner
+        dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}/scanner
+      shell: bash
 
     - name: Restore tools
       run: dotnet tool restore
@@ -52,6 +100,17 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
+    - name: Begin SonarCube analysis
+      if: inputs.enable-sonar == 'true'
+      run: |
+        SONAR_ARGS="/k:${{ inputs.sonar-project-key }} /o:${{ inputs.sonar-organization }} /d:sonar.token=${{ inputs.sonar-token }} /d:sonar.host.url=https://SonarCube.io"
+        if [ -n "${{ inputs.sonar-exclusions }}" ]; then
+          SONAR_ARGS="$SONAR_ARGS /d:sonar.exclusions=${{ inputs.sonar-exclusions }}"
+        fi
+        ${{ runner.temp }}/scanner/dotnet-sonarscanner begin $SONAR_ARGS
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
     - name: Build
       run: dotnet build --no-restore
       working-directory: ${{ inputs.working-directory }}
@@ -59,5 +118,12 @@ runs:
 
     - name: Test
       run: dotnet test -- --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+
+    - name: End SonarCube analysis
+      if: inputs.enable-sonar == 'true'
+      run: |
+        ${{ runner.temp }}/scanner/dotnet-sonarscanner end /d:sonar.token="${{ inputs.sonar-token }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash

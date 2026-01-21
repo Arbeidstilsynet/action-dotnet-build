@@ -10,12 +10,18 @@ Opinionated action for dotnet workflows. Restores, checks formatting, lints, bui
 
 ## Inputs
 
-| Name              | Description                             | Required | Default |
-|-------------------|-----------------------------------------|----------|---------|
-| working-directory | The directory to run dotnet commands in | Yes      |         |
-| dotnet-version    | The version of dotnet to use            | No       | 10.0.x  |
+| Name                 | Description                             | Required | Default |
+|----------------------|-----------------------------------------|----------|---------|
+| working-directory    | The directory to run dotnet commands in | Yes      |         |
+| dotnet-version       | The version of dotnet to use            | No       | 10.0.x  |
+| enable-sonar         | Enable SonarCube analysis              | No       | false   |
+| sonar-token          | SonarCube token                        | No       |         |
+| sonar-project-key    | SonarCube project key                  | No       |         |
+| sonar-organization   | SonarCube organization                 | No       |         |
 
 ## Usage
+
+### Basic Usage
 
 ```yaml
 jobs:
@@ -26,6 +32,25 @@ jobs:
       - uses: Arbeidstilsynet/action-dotnet-build@v2
         with:
           working-directory: ./src
+```
+
+### With SonarCube Integration
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for better analysis relevancy
+      - uses: Arbeidstilsynet/action-dotnet-build@v2
+        with:
+          working-directory: ./src
+          enable-sonar: 'true'
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+          sonar-project-key: 'your-project-key'
+          sonar-organization: 'your-organization'
 ```
 
 ## Versioning
