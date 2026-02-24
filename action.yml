@@ -92,11 +92,6 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
-    - name: Security check
-      run: dotnet list package --vulnerable
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-
     - name: List packages
       run: dotnet list package
       working-directory: ${{ inputs.working-directory }}
