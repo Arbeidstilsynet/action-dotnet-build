@@ -97,7 +97,7 @@ runs:
         echo: checking for vulnerable packages transitive..."
         OUTPUT=$(dotnet list package --vulnerable --include-transitive)
         echo "$OUTPUT"
-        if [[ "$OUTPUT" | grep -qE "High|Critical ]]; then
+        if [[ "$OUTPUT" | grep -qE "High|Critical" ]]; then
         echo -e "\e[31m Vulnerable packages found. Please check the output above.\e[0m"
         exit 1
         fi
