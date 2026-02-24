@@ -94,7 +94,7 @@ runs:
 
     - name: Security check
       run: |
-        echo: checking for vulnerable packages transitive..."
+        echo: "checking for vulnerable packages transitive..."
         OUTPUT=$(dotnet list package --vulnerable --include-transitive)
         echo "$OUTPUT"
         if [[ "$OUTPUT" | grep -qE "High|Critical" ]]; then
