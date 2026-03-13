@@ -2,23 +2,27 @@
 
 Opinionated action for dotnet workflows. Restores, checks formatting, lints, builds, and tests a .NET solution/project. Can optionally run SonarQube Cloud analysis.
 
+If you are using pre-commit hooks for formatting and linting, set `skip-csharpier: true` and `skip-style-analyzers: true`.
+
 ## Requirements
 
 - The `working-directory` must contain a single .NET solution or project compatible with the specified .NET SDK version.
-- [CSharpier](https://csharpier.com) must be installed in the working directory or an ancestor directory (e.g., via `dotnet tool install csharpier --create-manifest-if-needed`).
+- [CSharpier](https://csharpier.com) must be installed in the working directory or an ancestor directory (e.g., via `dotnet tool install csharpier --create-manifest-if-needed`) unless `skip-csharpier` is set to `true`.
 - From v3 onwards, this action uses [Microsoft Testing Platform v2](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-platform-intro) as the test runner. Code coverage is generated in Visual Studio Code Coverage XML format for SonarQube compatibility. For xUnit integration, see [xUnit with Microsoft Testing Platform](https://xunit.net/docs/getting-started/v3/microsoft-testing-platform).
 
 ## Inputs
 
-| Name               | Description                                                                                                     | Required            | Default |
-|--------------------|-----------------------------------------------------------------------------------------------------------------|---------------------|---------|
-| working-directory  | The directory to run dotnet commands in                                                                         | Yes                 |         |
-| dotnet-version     | The version of dotnet to use                                                                                    | No                  | 10.0.x  |
-| enable-sonar       | Enable SonarQube analysis                                                                                       | No                  | false   |
-| sonar-token        | SonarQube token                                                                                                 | Yes if enable-sonar |         |
-| sonar-organization | SonarQube organization                                                                                          | Yes if enable-sonar |         |
-| sonar-project-key  | SonarQube project key                                                                                           | Yes if enable-sonar |         |
-| sonar-exclusions   | Comma-separated list of file patterns to exclude from SonarQube analysis (e.g., '**/Migrations/**,**/Utils/**') | No                  |         |
+| Name                 | Description                                                                                                     | Required            | Default |
+|----------------------|-----------------------------------------------------------------------------------------------------------------|---------------------|---------|
+| working-directory    | The directory to run dotnet commands in                                                                         | Yes                 |         |
+| dotnet-version       | The version of dotnet to use                                                                                    | No                  | 10.0.x  |
+| skip-csharpier       | Skip the CSharpier format check                                                                                 | No                  | false   |
+| skip-style-analyzers | Skip `dotnet format style` and `dotnet format analyzers` checks                                                 | No                  | false   |
+| enable-sonar         | Enable SonarQube analysis                                                                                       | No                  | false   |
+| sonar-token          | SonarQube token                                                                                                 | Yes if enable-sonar |         |
+| sonar-organization   | SonarQube organization                                                                                          | Yes if enable-sonar |         |
+| sonar-project-key    | SonarQube project key                                                                                           | Yes if enable-sonar |         |
+| sonar-exclusions     | Comma-separated list of file patterns to exclude from SonarQube analysis (e.g., '**/Migrations/**,**/Utils/**') | No                  |         |
 
 ## Usage
 
@@ -29,10 +33,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: Arbeidstilsynet/action-dotnet-build@v4
         with:
-          working-directory: ./src
+          working-directory: .
 ```
 
 ### With SonarQube Integration
@@ -42,16 +46,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Shallow clones should be disabled for better analysis relevancy
       - uses: Arbeidstilsynet/action-dotnet-build@v4
         with:
-          working-directory: ./src
+          working-directory: .
           enable-sonar: 'true'
           sonar-token: ${{ secrets.SONAR_TOKEN }}
           sonar-project-key: 'your-project-key'
           sonar-organization: 'your-organization'
+```
+
+### Skipping Formatting Checks
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: Arbeidstilsynet/action-dotnet-build@v4
+        with:
+          working-directory: .
+          skip-csharpier: 'true'
+          skip-style-analyzers: 'true'
 ```
 
 ## Versioning

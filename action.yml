@@ -9,6 +9,12 @@ inputs:
   dotnet-version:
     description: "The version of dotnet to use"
     default: "10.0.x"
+  skip-csharpier:
+    description: "Skip the CSharpier check"
+    default: "false"
+  skip-style-analyzers:
+    description: "Skip dotnet format style and analyzers checks"
+    default: "false"
   enable-sonar:
     description: "Enable SonarQube analysis"
     default: "false"
@@ -98,16 +104,19 @@ runs:
       shell: bash
 
     - name: Csharpier lint
+      if: inputs.skip-csharpier != 'true'
       run: dotnet csharpier check .
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
     - name: Dotnet format style
+      if: inputs.skip-style-analyzers != 'true'
       run: dotnet format style --verify-no-changes
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
     - name: Dotnet format analyzers
+      if: inputs.skip-style-analyzers != 'true'
       run: dotnet format analyzers --verify-no-changes
       working-directory: ${{ inputs.working-directory }}
       shell: bash

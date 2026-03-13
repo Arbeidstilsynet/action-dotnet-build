@@ -2,7 +2,8 @@
 
 ## v4
 
-Add optional SonarQube Cloud steps.
+- Add optional SonarQube Cloud steps.
+- Add optional inputs `skip-csharpier` and `skip-style-analyzers`
 
 ## v3
 
