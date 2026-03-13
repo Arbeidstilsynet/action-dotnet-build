@@ -89,12 +89,12 @@ runs:
       shell: bash
 
     - name: Restore tools
+      if: inputs.skip-csharpier != 'true'
       run: dotnet tool restore
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
     - name: Restore
-      if: inputs.skip-csharpier != 'true'
       run: dotnet restore
       working-directory: ${{ inputs.working-directory }}
       shell: bash
