@@ -110,15 +110,36 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
-    - name: Dotnet format style
+    # Each check loads and compiles the whole workspace, so running both
+    # concurrently roughly halves the wall time. Restore already ran above.
+    - name: Dotnet format style and analyzers
       if: inputs.skip-style-analyzers != 'true'
-      run: dotnet format style --verify-no-changes
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
+      run: |
+        log_dir="$(mktemp -d)"
+        dotnet format style --verify-no-changes --no-restore > "$log_dir/style.log" 2>&1 &
+        style_pid=$!
+        dotnet format analyzers --verify-no-changes --no-restore > "$log_dir/analyzers.log" 2>&1 &
+        analyzers_pid=$!
 
-    - name: Dotnet format analyzers
-      if: inputs.skip-style-analyzers != 'true'
-      run: dotnet format analyzers --verify-no-changes
+        style_status=0
+        wait "$style_pid" || style_status=$?
+        analyzers_status=0
+        wait "$analyzers_pid" || analyzers_status=$?
+
+        report() {
+          if [ "$2" -eq 0 ]; then
+            echo "::group::dotnet format $1 (passed)"
+            cat "$log_dir/$1.log"
+            echo "::endgroup::"
+          else
+            cat "$log_dir/$1.log"
+            echo "::error::dotnet format $1 --verify-no-changes failed (exit $2)"
+          fi
+        }
+        report style "$style_status"
+        report analyzers "$analyzers_status"
+
+        [ "$style_status" -eq 0 ] && [ "$analyzers_status" -eq 0 ]
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
@@ -142,7 +163,7 @@ runs:
       shell: bash
 
     - name: Test
-      run: dotnet test -- --coverage --coverage-output-format xml --coverage-output coverage.xml
+      run: dotnet test --no-build -- --coverage --coverage-output-format xml --coverage-output coverage.xml
       working-directory: ${{ inputs.working-directory }}
       shell: bash
 
