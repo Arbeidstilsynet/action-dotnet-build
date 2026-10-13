@@ -9,6 +9,7 @@ If you are using pre-commit hooks for formatting and linting, set `skip-csharpie
 - The `working-directory` must contain a single .NET solution or project compatible with the specified .NET SDK version.
 - [CSharpier](https://csharpier.com) must be installed in the working directory or an ancestor directory (e.g., via `dotnet tool install csharpier --create-manifest-if-needed`) unless `skip-csharpier` is set to `true`.
 - From v3 onwards, this action uses [Microsoft Testing Platform v2](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-platform-intro) as the test runner. Code coverage is generated in Visual Studio Code Coverage XML format for SonarQube compatibility. For xUnit integration, see [xUnit with Microsoft Testing Platform](https://xunit.net/docs/getting-started/v3/microsoft-testing-platform).
+- Tests run with `--no-build` against the output of the `Build` step, so the test projects must be part of the solution/project being built.
 
 ## Inputs
 
@@ -18,6 +19,7 @@ If you are using pre-commit hooks for formatting and linting, set `skip-csharpie
 | dotnet-version       | The version of dotnet to use                                                                                    | No                  | 10.0.x  |
 | skip-csharpier       | Skip the CSharpier format check                                                                                 | No                  | false   |
 | skip-style-analyzers | Skip `dotnet format style` and `dotnet format analyzers` checks                                                 | No                  | false   |
+| cache-nuget          | Cache `~/.nuget/packages`, keyed on `*.csproj`, `*.props` and `packages.lock.json` files                        | No                  | true    |
 | enable-sonar         | Enable SonarQube analysis                                                                                       | No                  | false   |
 | sonar-token          | SonarQube token                                                                                                 | Yes if enable-sonar |         |
 | sonar-organization   | SonarQube organization                                                                                          | Yes if enable-sonar |         |
