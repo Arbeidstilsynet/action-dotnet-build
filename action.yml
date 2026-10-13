@@ -15,9 +15,6 @@ inputs:
   skip-style-analyzers:
     description: "Skip dotnet format style and analyzers checks"
     default: "false"
-  cache-nuget:
-    description: "Cache the NuGet global packages folder, keyed on project, props and lock files in working-directory"
-    default: "true"
   enable-sonar:
     description: "Enable SonarQube analysis"
     default: "false"
@@ -66,15 +63,6 @@ runs:
       uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
-
-    - name: Cache NuGet packages
-      if: inputs.cache-nuget == 'true'
-      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-      with:
-        path: ~/.nuget/packages
-        # Tool manifests and central package files may live in working-directory or any ancestor, so match them workspace-wide.
-        key: ${{ runner.os }}-nuget-${{ hashFiles(format('{0}/**/*.csproj', inputs.working-directory), format('{0}/**/*.props', inputs.working-directory), format('{0}/**/packages.lock.json', inputs.working-directory), '**/Directory.Packages.props', '**/Directory.Build.props', '**/.config/dotnet-tools.json') }}
-        restore-keys: ${{ runner.os }}-nuget-
 
     - name: Cache SonarQube packages
       if: inputs.enable-sonar == 'true'

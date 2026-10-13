@@ -19,7 +19,6 @@ If you are using pre-commit hooks for formatting and linting, set `skip-csharpie
 | dotnet-version       | The version of dotnet to use                                                                                    | No                  | 10.0.x  |
 | skip-csharpier       | Skip the CSharpier format check                                                                                 | No                  | false   |
 | skip-style-analyzers | Skip `dotnet format style` and `dotnet format analyzers` checks                                                 | No                  | false   |
-| cache-nuget          | Cache `~/.nuget/packages`, keyed on project, props, lock files and `dotnet-tools.json` manifests                | No                  | true    |
 | enable-sonar         | Enable SonarQube analysis                                                                                       | No                  | false   |
 | sonar-token          | SonarQube token                                                                                                 | Yes if enable-sonar |         |
 | sonar-organization   | SonarQube organization                                                                                          | Yes if enable-sonar |         |

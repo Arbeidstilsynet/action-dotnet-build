@@ -3,7 +3,6 @@
 ## v4
 
 - Speed up the pipeline (non-breaking):
-  - Cache NuGet packages (new input `cache-nuget`, default `true`)
   - Run `dotnet format style` and `dotnet format analyzers` concurrently with `--no-restore`
   - Run `dotnet test --no-build` instead of rebuilding before tests
 - Add optional SonarQube Cloud steps
